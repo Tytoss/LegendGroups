@@ -33,7 +33,7 @@ public class MetaData<T> {
         return System.currentTimeMillis() > expiry;
     }
 
-    public Long remainingTime() {
+    public Long getRemainingTime() {
         if (expiry == null) return null;
         return expiry - System.currentTimeMillis();
     }

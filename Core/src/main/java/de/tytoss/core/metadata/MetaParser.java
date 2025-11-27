@@ -8,9 +8,7 @@ public final class MetaParser {
         if (type == null) return value;
 
         switch (type.toUpperCase()) {
-            case "STRING":
-                return value;
-
+            case "STRING": return value;
             case "INT":
             case "INTEGER":
                 try {
@@ -18,33 +16,26 @@ public final class MetaParser {
                 } catch (NumberFormatException e) {
                     return 0;
                 }
-
             case "LONG":
                 try {
                     return Long.parseLong(value);
                 } catch (NumberFormatException e) {
                     return 0L;
                 }
-
-            case "BOOLEAN":
-                return "true".equalsIgnoreCase(value);
-
+            case "BOOLEAN": return "true".equalsIgnoreCase(value);
             case "DOUBLE":
                 try {
                     return Double.parseDouble(value);
                 } catch (NumberFormatException e) {
                     return 0.0;
                 }
-
             case "FLOAT":
                 try {
                     return Float.parseFloat(value);
                 } catch (NumberFormatException e) {
                     return 0f;
                 }
-
-            default:
-                return value;
+            default: return value;
         }
     }
 }

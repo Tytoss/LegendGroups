@@ -1,4 +1,4 @@
-package de.tytoss.core.model.types;
+package de.tytoss.core.entity.types;
 
 public enum PermissionOwnerType {
     PLAYER,
