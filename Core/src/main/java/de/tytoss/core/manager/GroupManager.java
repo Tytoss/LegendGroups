@@ -1,9 +1,12 @@
 package de.tytoss.core.manager;
 
+import de.tytoss.core.Core;
 import de.tytoss.core.manager.base.OwnerManager;
 import de.tytoss.core.entity.PermissionGroup;
 import de.tytoss.core.entity.base.PermissionOwner;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GroupManager extends OwnerManager {
@@ -12,8 +15,13 @@ public class GroupManager extends OwnerManager {
 
     public GroupManager() {
         super();
-        defaultGroup = new PermissionGroup(UUID.randomUUID(), "default");
-        save(defaultGroup);
+        Optional<PermissionOwner> group = getAll().stream().filter(permissionGroup -> Objects.equals(permissionGroup.getName(), "default")).findFirst();
+        if(group.isEmpty()) {
+            defaultGroup = new PermissionGroup(UUID.randomUUID(), "default");
+            save(defaultGroup);
+        } else {
+            defaultGroup = (PermissionGroup) group.get();
+        }
     }
 
     public PermissionGroup getDefaultGroup() {
