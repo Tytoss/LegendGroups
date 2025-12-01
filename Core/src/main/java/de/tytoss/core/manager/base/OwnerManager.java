@@ -2,6 +2,8 @@ package de.tytoss.core.manager.base;
 
 import de.tytoss.core.database.PermissionOwnerRepository;
 import de.tytoss.core.entity.base.PermissionOwner;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
@@ -16,12 +18,11 @@ public abstract class OwnerManager {
         return cache.get(id);
     }
 
-    public PermissionOwner load(UUID uuid) {
+    public Mono<PermissionOwner> load(UUID uuid) {
         if(get(uuid) == null) {
-            PermissionOwner owner = PermissionOwnerRepository.load(uuid).block();
-            cache.put(uuid, owner);
-            return owner;
-        } else return get(uuid);
+            return PermissionOwnerRepository.load(uuid)
+                    .doOnNext(this::cache);
+        } else return Mono.just(get(uuid));
     }
 
     public void save(PermissionOwner owner) {

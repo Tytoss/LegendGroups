@@ -1,5 +1,6 @@
 package de.tytoss.core.synchronizing;
 
+import de.tytoss.core.metadata.MetaContainer;
 import de.tytoss.core.metadata.MetaData;
 
 import java.io.*;
@@ -8,13 +9,13 @@ import java.util.List;
 
 public class MetaSerializer {
 
-    public static byte[] serialize(List<MetaData<?>> meta) throws IOException {
+    public static byte[] serialize(MetaContainer container) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              DataOutputStream dos = new DataOutputStream(bos)) {
 
-            dos.writeInt(meta.size());
+            dos.writeInt(container.getAll().size());
 
-            for (MetaData<?> metaNode : meta) {
+            for (MetaData<?> metaNode : container.getAll()) {
                 dos.writeUTF(metaNode.getKey());
 
                 Object metaValue = metaNode.getValue();

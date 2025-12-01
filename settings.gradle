@@ -17,7 +17,8 @@ plugins {
 
 rootProject.name = 'LegendGroups'
 
-include(':Core')
-include(':Velocity')
-include(':Paper')
-include 'Core'
+include(
+        'Core',
+        'Velocity',
+        'Paper'
+)

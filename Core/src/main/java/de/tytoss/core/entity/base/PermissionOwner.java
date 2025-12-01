@@ -14,7 +14,7 @@ public abstract class PermissionOwner {
 
     protected final UUID id;
     protected String name;
-    protected final MetaContainer metaData = new MetaContainer();
+    protected MetaContainer metaData = new MetaContainer();
     private final PermissionOwnerType type;
 
     public PermissionOwner(UUID id, String name, PermissionOwnerType type) {
@@ -101,6 +101,10 @@ public abstract class PermissionOwner {
             case PLAYER -> Core.getInstance().getPlayerManager().save(this);
             case GROUP -> Core.getInstance().getGroupManager().save(this);
         }
+    }
+
+    public void replaceMetaContainer(MetaContainer metaContainer) {
+        metaData = metaContainer;
     }
 }
 

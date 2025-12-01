@@ -1,9 +1,7 @@
 package de.tytoss.core;
 
-import de.tytoss.core.database.DatabaseManager;
 import de.tytoss.core.manager.GroupManager;
 import de.tytoss.core.manager.PlayerManager;
-import io.r2dbc.spi.Connection;
 
 public class Core {
     private static Core instance;
