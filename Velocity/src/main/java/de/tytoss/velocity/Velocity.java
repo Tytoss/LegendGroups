@@ -12,6 +12,7 @@ import de.tytoss.core.Core;
 import de.tytoss.core.database.DatabaseManager;
 import de.tytoss.velocity.configuration.ConfigurationManager;
 import de.tytoss.velocity.listener.PermissionSetupListener;
+import de.tytoss.velocity.listener.PlayerDisconnectListener;
 import de.tytoss.velocity.listener.PlayerJoinListener;
 import de.tytoss.velocity.messenger.PluginMessageHandler;
 import org.slf4j.Logger;
@@ -71,5 +72,6 @@ public class Velocity {
         server.getEventManager().register(this, new PluginMessageHandler());
         server.getEventManager().register(this, new PlayerJoinListener());
         server.getEventManager().register(this, new PermissionSetupListener());
+        server.getEventManager().register(this, new PlayerDisconnectListener());
     }
 }
