@@ -15,8 +15,6 @@ public class PermissionSetupListener {
         PermissionSubject subject = event.getSubject();
         if (!(subject instanceof Player player)) return;
 
-        System.out.println("PermissionSetup: " + player.getUsername());
-
         PermissionPlayer permissionPlayer = (PermissionPlayer) Core.getInstance().getPlayerManager().get(player.getUniqueId());
 
         if (permissionPlayer == null) permissionPlayer = (PermissionPlayer) Core.getInstance().getPlayerManager().create(player.getUniqueId(), player.getUsername());

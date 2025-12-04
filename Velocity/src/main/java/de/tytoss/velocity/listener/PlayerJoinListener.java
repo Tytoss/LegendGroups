@@ -29,8 +29,6 @@ public class PlayerJoinListener {
 
         UUID uuid = event.getUniqueId();
 
-        System.out.println("PreJoin: " + uuid);
-
         Core.getInstance().getPlayerManager().load(uuid).subscribe();
     }
 }

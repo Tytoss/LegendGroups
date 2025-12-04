@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import de.tytoss.core.Core;
 import de.tytoss.core.database.DatabaseManager;
+import de.tytoss.core.database.PermissionOwnerRepository;
 import de.tytoss.velocity.configuration.ConfigurationManager;
 import de.tytoss.velocity.listener.PermissionSetupListener;
 import de.tytoss.velocity.listener.PlayerDisconnectListener;
@@ -65,7 +66,9 @@ public class Velocity {
 
         databaseManager.init(host, Integer.parseInt(port), database, username, password);
 
-        Core.getInstance();
+        PermissionOwnerRepository.loadGroups().subscribe( groups -> {
+            Core.getInstance();
+        });
 
         server.getChannelRegistrar().register(channelIdentifier);
 
