@@ -28,7 +28,13 @@ public class GroupManager extends OwnerManager {
     }
 
     public PermissionGroup getDefaultGroup() {
-        return defaultGroup;
+        if (defaultGroup != null) {
+            return defaultGroup;
+        } else  {
+            PermissionGroup group = new PermissionGroup(UUID.randomUUID(), "default");
+            save(group);
+            return group;
+        }
     }
 
     @Override
