@@ -1,4 +1,3 @@
-name: Paper
+name: LegendGroups
 version: '1.0-SNAPSHOT'
-main: de.tytoss.paper.Paper
-api-version: '1.21'
+main: de.tytoss.paper.LegendGroups
