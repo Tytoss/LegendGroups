@@ -33,6 +33,7 @@ public class GroupManager extends OwnerManager {
         } else  {
             PermissionGroup group = new PermissionGroup(UUID.randomUUID(), "default");
             save(group);
+            defaultGroup = group;
             return group;
         }
     }
