@@ -2,7 +2,6 @@ package de.tytoss.core.manager.base;
 
 import de.tytoss.core.database.PermissionOwnerRepository;
 import de.tytoss.core.entity.base.PermissionOwner;
-import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -28,6 +27,14 @@ public abstract class OwnerManager {
     public void save(PermissionOwner owner) {
         if (!cache.containsKey(owner.getId())) cache(owner);
         PermissionOwnerRepository.save(owner).subscribe();
+    }
+
+    public void save(PermissionOwner owner, Runnable onComplete) {
+        if (!cache.containsKey(owner.getId())) cache(owner);
+        PermissionOwnerRepository.save(owner)
+                .doOnError(Throwable::printStackTrace)
+                .doOnSuccess(__ -> onComplete.run())
+                .subscribe();
     }
 
     public void cache(PermissionOwner owner) {

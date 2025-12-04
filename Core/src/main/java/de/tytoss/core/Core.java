@@ -1,5 +1,6 @@
 package de.tytoss.core;
 
+import de.tytoss.core.database.PermissionOwnerRepository;
 import de.tytoss.core.manager.GroupManager;
 import de.tytoss.core.manager.PlayerManager;
 

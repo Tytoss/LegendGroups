@@ -1,5 +1,7 @@
 package de.tytoss.core.metadata;
 
+import java.util.UUID;
+
 public final class MetaParser {
 
     private MetaParser() {}
@@ -35,6 +37,7 @@ public final class MetaParser {
                 } catch (NumberFormatException e) {
                     return 0f;
                 }
+            case "UUID": return UUID.fromString(value);
             default: return value;
         }
     }

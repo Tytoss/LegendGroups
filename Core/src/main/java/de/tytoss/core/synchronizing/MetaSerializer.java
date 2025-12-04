@@ -6,6 +6,7 @@ import de.tytoss.core.metadata.MetaData;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MetaSerializer {
 
@@ -45,6 +46,10 @@ public class MetaSerializer {
                         dos.writeUTF("FLOAT");
                         dos.writeFloat(f);
                     }
+                    case UUID u -> {
+                        dos.writeUTF("UUID");
+                        dos.writeUTF(u.toString());
+                    }
                     default ->
                             throw new IOException("Meta value type not supported: " + metaValue.getClass().getSimpleName());
                 }
@@ -76,6 +81,7 @@ public class MetaSerializer {
                     case "BOOLEAN" -> value = dis.readBoolean();
                     case "DOUBLE" -> value = dis.readDouble();
                     case "FLOAT" -> value = dis.readFloat();
+                    case "UUID" -> value = UUID.fromString(dis.readUTF());
                     default -> throw new IOException("Unknown Meta value type: " + type);
                 }
 
