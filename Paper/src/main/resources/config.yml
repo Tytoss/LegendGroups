@@ -4,3 +4,23 @@ database:
   database: minecraft
   username: postgres
   password: postgres
+
+message:
+  prefix: "§e§lLegendGroups §7| "
+  gui:
+    firstPage: "Erste Seite"
+    previousPage: "Vorherige Seite"
+    nextPage: "Nächste Seite"
+    lastPage: "Letzte Seite"
+    exit: "Exit"
+    return: "Zurück"
+    groupItemName: "Gruppen"
+    playerItemName: "Spieler"
+    ownerGroupsItemName: "Gruppen"
+    ownerPermissionsItemName: "Permissions"
+    groupsAddItemName: "§aGruppe Hinzufügen"
+    permissionsAddItemName: "§aPermission Hinzufügen"
+  lore:
+    removeLore: "Rechtsclick zum Entfernen"
+  error:
+    ownerNotFound: "Could not Load Permission Owner"

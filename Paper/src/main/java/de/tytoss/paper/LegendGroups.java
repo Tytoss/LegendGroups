@@ -3,14 +3,17 @@ package de.tytoss.paper;
 import de.tytoss.core.Core;
 import de.tytoss.core.database.DatabaseManager;
 import de.tytoss.core.database.PermissionOwnerRepository;
-import de.tytoss.core.manager.GroupManager;
 import de.tytoss.paper.commands.TestCommand;
 import de.tytoss.paper.configuration.ConfigurationManager;
 import de.tytoss.paper.listener.ConnectionListener;
+import de.tytoss.paper.menu.MenuManager;
+import de.tytoss.paper.menu.menus.input.GroupCreateAnvil;
+import de.tytoss.paper.menu.menus.input.PlayerAddGroupAnvil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 public final class LegendGroups extends JavaPlugin {
 
@@ -44,7 +47,11 @@ public final class LegendGroups extends JavaPlugin {
 
         databaseManager.init(host, Integer.parseInt(port), database, username, password);
 
-        Core.getInstance();
+        PermissionOwnerRepository.loadGroups().subscribe( groups -> {
+            Core.getInstance();
+            groups.forEach(group -> Core.getInstance().getGroupManager().cache(group));
+            this.getLogger().log(Level.INFO, "Loaded " + groups.size() + " groups");
+        });
     }
 
     @Override
@@ -52,8 +59,12 @@ public final class LegendGroups extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "legendgroups:sync");
 
         Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerAddGroupAnvil(), this);
+        Bukkit.getPluginManager().registerEvents(new GroupCreateAnvil(), this);
 
         getCommand("abc").setExecutor(new TestCommand());
+
+        MenuManager.setup(this.getServer());
     }
 
     @Override

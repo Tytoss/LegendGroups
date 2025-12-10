@@ -2,3 +2,5 @@ name: LegendGroups
 version: '1.0-SNAPSHOT'
 main: de.tytoss.paper.LegendGroups
 api-version: '1.21'
+commands:
+  abc:
