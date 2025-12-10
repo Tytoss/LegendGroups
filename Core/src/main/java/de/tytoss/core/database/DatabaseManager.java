@@ -49,10 +49,12 @@ public class DatabaseManager {
                 );
                 """;
 
-        return getConnection().flatMap(conn ->
-                Mono.from(conn.createStatement(createOwners).execute())
+        return Mono.usingWhen(
+                getConnection(),
+                conn -> Mono.from(conn.createStatement(createOwners).execute())
                         .then(Mono.from(conn.createStatement(createMeta).execute()))
-                        .doFinally(__ -> conn.close())
-        ).then();
+                        .then(),
+                conn -> Mono.from(conn.close())
+        );
     }
 }
