@@ -51,6 +51,20 @@ class PermissionTest {
     }
 
     @Test
+    void testDefaultGroup() {
+        UUID uuid = UUID.randomUUID();
+        PermissionPlayer player = (PermissionPlayer) playerManager.create(uuid, "test");
+
+        PermissionGroup defaultGroup = groupManager.getDefaultGroup();
+
+        defaultGroup.addPermission("test", Boolean.TRUE);
+
+        assert player.getGroups().contains(defaultGroup);
+        assert player.hasPermission("test");
+        assert !player.hasPermission("test2");
+    }
+
+    @Test
     void testPermissionRemove() {
         UUID uuid = UUID.randomUUID();
         PermissionPlayer player = new PermissionPlayer(uuid, "TestPlayer");

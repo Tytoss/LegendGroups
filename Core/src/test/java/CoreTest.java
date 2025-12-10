@@ -1,8 +1,6 @@
 import de.tytoss.core.Core;
 import de.tytoss.core.database.DatabaseManager;
 import de.tytoss.core.entity.PermissionPlayer;
-import de.tytoss.core.manager.GroupManager;
-import de.tytoss.core.manager.PlayerManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -15,8 +13,6 @@ import java.util.UUID;
 class CoreTest {
 
     private Core core;
-    private PlayerManager playerManager;
-    private GroupManager groupManager;
 
     @Container
     static PostgreSQLContainer<?> postgres =
@@ -33,38 +29,37 @@ class CoreTest {
                 postgres.getPassword()
         );
         core = Core.getInstance();
-        playerManager = core.getPlayerManager();
-        groupManager = core.getGroupManager();
     }
 
     @Test
     void testPlayerManagerInitialization() {
-        assert playerManager != null;
+        assert core.getPlayerManager() != null;
     }
 
     @Test
     void testGroupManagerInitialization() {
-        assert groupManager != null;
+        assert core.getGroupManager() != null;
+        assert core.getGroupManager().getDefaultGroup() != null;
     }
 
     @Test
     void testCreatePlayer() {
         UUID uuid = UUID.randomUUID();
-        PermissionPlayer player = (PermissionPlayer) playerManager.create(uuid, "TestPlayer");
+        PermissionPlayer player = (PermissionPlayer) Core.getInstance().getPlayerManager().create(uuid, "TestPlayer");
 
         assert player != null;
         assert player.getName().equals("TestPlayer");
         assert player.getId().equals(uuid);
-        assert player.getGroups().contains(groupManager.getDefaultGroup());
-        assert playerManager.get(uuid) != null;
-        assert playerManager.get(uuid).equals(player);
+        assert player.getGroups().contains(Core.getInstance().getGroupManager().getDefaultGroup());
+        assert core.getPlayerManager().get(uuid) != null;
+        assert core.getPlayerManager().get(uuid).equals(player);
     }
 
     @Test
     void testDuplicatePlayerCreation() {
         UUID uuid = UUID.randomUUID();
-        PermissionPlayer player = (PermissionPlayer) playerManager.create(uuid, "TestPlayer");
-        PermissionPlayer player2 = (PermissionPlayer) playerManager.create(uuid, "TestPlayer2");
+        PermissionPlayer player = (PermissionPlayer) Core.getInstance().getPlayerManager().create(uuid, "TestPlayer");
+        PermissionPlayer player2 = (PermissionPlayer) Core.getInstance().getPlayerManager().create(uuid, "TestPlayer2");
 
         assert player.equals(player2);
         assert player2.getName().equals("TestPlayer");

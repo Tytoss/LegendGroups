@@ -18,12 +18,7 @@ public class GroupManager extends OwnerManager {
         super();
         PermissionOwnerRepository.loadGroups().subscribe(groups -> {
             Optional<PermissionGroup> group = groups.stream().filter(permissionGroup -> Objects.equals(permissionGroup.getName(), "default")).findFirst();
-            if(group.isEmpty()) {
-                defaultGroup = new PermissionGroup(UUID.randomUUID(), "default");
-                save(defaultGroup);
-            } else {
-                defaultGroup = group.get();
-            }
+            defaultGroup = group.orElseGet(() -> (PermissionGroup) create(UUID.randomUUID(), "default"));
         });
     }
 
@@ -31,8 +26,7 @@ public class GroupManager extends OwnerManager {
         if (defaultGroup != null) {
             return defaultGroup;
         } else  {
-            PermissionGroup group = new PermissionGroup(UUID.randomUUID(), "default");
-            save(group);
+            PermissionGroup group = (PermissionGroup) create(UUID.randomUUID(), "default");
             defaultGroup = group;
             return group;
         }
@@ -43,6 +37,7 @@ public class GroupManager extends OwnerManager {
         if (get(uuid) != null) return get(uuid);
         PermissionOwner group = new PermissionGroup(uuid, name);
         cache(group);
+        save(group);
         return group;
     }
 }
