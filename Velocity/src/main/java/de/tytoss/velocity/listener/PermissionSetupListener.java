@@ -17,7 +17,10 @@ public class PermissionSetupListener {
 
         PermissionPlayer permissionPlayer = (PermissionPlayer) Core.getInstance().getPlayerManager().get(player.getUniqueId());
 
-        if (permissionPlayer == null) permissionPlayer = (PermissionPlayer) Core.getInstance().getPlayerManager().create(player.getUniqueId(), player.getUsername());
+        if (permissionPlayer == null) {
+            permissionPlayer = (PermissionPlayer) Core.getInstance().getPlayerManager().create(player.getUniqueId(), player.getUsername());
+            permissionPlayer.save();
+        }
 
         event.setProvider(new LegendPermissionProvider(player, permissionPlayer));
     }

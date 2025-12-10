@@ -68,6 +68,7 @@ public class Velocity {
 
         PermissionOwnerRepository.loadGroups().subscribe( groups -> {
             Core.getInstance();
+            groups.forEach(group -> Core.getInstance().getGroupManager().cache(group));
         });
 
         server.getChannelRegistrar().register(channelIdentifier);
