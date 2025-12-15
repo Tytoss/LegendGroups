@@ -7,10 +7,7 @@ import de.tytoss.core.entity.base.PermissionOwner;
 import de.tytoss.core.entity.types.PermissionOwnerType;
 import de.tytoss.core.utils.DurationParser;
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PermissionPlayer extends PermissionOwner {
@@ -85,6 +82,12 @@ public class PermissionPlayer extends PermissionOwner {
         if (getGroups().contains(group)) return;
         long durationMillis = DurationParser.parseDuration(duration);
         metaData.addMeta(new MetaData<>(MetaKeys.TEMP_GROUP + group.getId(), group.getId(), System.currentTimeMillis() + durationMillis));
+    }
+
+    public PermissionGroup getPrimaryGroup() {
+        return getGroups().stream()
+                .max(Comparator.comparingInt(PermissionGroup::getWeight))
+                .orElse(Core.getInstance().getGroupManager().getDefaultGroup());
     }
 
     public void removeGroup(PermissionGroup group) {

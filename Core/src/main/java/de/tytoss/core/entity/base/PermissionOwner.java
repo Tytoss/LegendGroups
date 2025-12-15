@@ -2,11 +2,13 @@ package de.tytoss.core.entity.base;
 
 
 import de.tytoss.core.Core;
+import de.tytoss.core.entity.PermissionGroup;
 import de.tytoss.core.metadata.MetaContainer;
 import de.tytoss.core.metadata.MetaData;
 import de.tytoss.core.metadata.keys.MetaKeys;
 import de.tytoss.core.entity.types.PermissionOwnerType;
 import de.tytoss.core.utils.DurationParser;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -106,5 +108,13 @@ public abstract class PermissionOwner {
     public void replaceMetaContainer(MetaContainer metaContainer) {
         metaData = metaContainer;
     }
-}
 
+    public @Nullable String getPrefix() {
+        MetaData<?> meta = metaData.getFirstMeta(MetaKeys.PREFIX);
+        return meta != null ? meta.getValue().toString() : null;
+    }
+
+    public void setPrefix(String prefix) {
+        metaData.setMeta(MetaKeys.PREFIX, prefix);
+    }
+}

@@ -60,4 +60,15 @@ public class PermissionGroup extends PermissionOwner {
     public void removeInheritedGroup(PermissionGroup group) {
         inheritedGroups.remove(group);
     }
+
+    public int getWeight() {
+        Object weight = metaData.getFirstMeta(MetaKeys.WEIGHT).getValue();
+        if (weight == null) return 0;
+
+        try {
+            return Integer.parseInt(weight.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
 }

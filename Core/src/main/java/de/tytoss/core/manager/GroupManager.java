@@ -5,6 +5,8 @@ import de.tytoss.core.database.PermissionOwnerRepository;
 import de.tytoss.core.manager.base.OwnerManager;
 import de.tytoss.core.entity.PermissionGroup;
 import de.tytoss.core.entity.base.PermissionOwner;
+import de.tytoss.core.metadata.MetaData;
+import de.tytoss.core.metadata.keys.MetaKeys;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +38,7 @@ public class GroupManager extends OwnerManager {
     public PermissionOwner create(UUID uuid, String name) {
         if (get(uuid) != null) return get(uuid);
         PermissionOwner group = new PermissionGroup(uuid, name);
+        group.getMetaData().addMeta(new MetaData<>(MetaKeys.WEIGHT, 0));
         cache(group);
         save(group);
         return group;

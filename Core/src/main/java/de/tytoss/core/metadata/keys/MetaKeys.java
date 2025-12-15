@@ -9,6 +9,6 @@ public final class MetaKeys {
     public static final String TEMP_GROUP = "temp-group.";
     public static final String GROUP = "group.";
     public static final String INHERITED = "inherited.";
-    public static final String WEIGHT = "weight.";
+    public static final String WEIGHT = "weight";
     public static final String OTHER = "other.";
 }
