@@ -1,10 +1,11 @@
 package de.tytoss.paper.menu.menus.input;
 
 import de.tytoss.core.Core;
-import de.tytoss.core.entity.PermissionGroup;
+import de.tytoss.core.entity.base.PermissionOwner;
 import de.tytoss.paper.menu.PaginatedMenu;
 import de.tytoss.paper.messenger.PaperSync;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class GroupCreateAnvil implements Listener {
+public class PermissionAddAnvil implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
@@ -27,24 +28,42 @@ public class GroupCreateAnvil implements Listener {
 
         Player player = (Player) event.getWhoClicked();
 
-        if (inputNamePlayer.remove(player.getUniqueId()) != null && event.getRawSlot() == 2) {
+        if (inputPermissionPlayer.remove(player.getUniqueId()) != null && event.getRawSlot() == 2) {
             event.setCancelled(true);
 
-            String groupName = inv.getRenameText();
+            String permission = inv.getRenameText();
 
-            if (groupName == null) return;
+            if (permission == null) return;
 
-            PermissionGroup group = (PermissionGroup) Core.getInstance().getGroupManager().create(UUID.randomUUID(), groupName);
+            PaginatedMenu from = tempFrom.get(player.getUniqueId());
 
-            PaperSync.sendSync(player, group);
-            tempFrom.get(player.getUniqueId()).open();
+            Player target = Bukkit.getPlayer(from.getMenuName());
+
+            PermissionOwner permissionTarget;
+
+            if (target == null) {
+                permissionTarget = Core.getInstance().getGroupManager().getAll().stream().filter( group -> group.getName().equals(from.getMenuName())).findFirst().orElse(null);
+
+                if(permissionTarget == null) return;
+
+                permissionTarget.addPermission(permission);
+            } else {
+                permissionTarget = Core.getInstance().getPlayerManager().get(target.getUniqueId());
+
+                if(permissionTarget == null) return;
+
+                permissionTarget.addPermission(permission);
+            }
+
+            PaperSync.sendSync(player, permissionTarget);
+            from.open();
             tempFrom.remove(player.getUniqueId());
         } else {
             event.setCancelled(true);
         }
     }
 
-    private static final Map<UUID, Boolean> inputNamePlayer = new HashMap<>();
+    private static final Map<UUID, Boolean> inputPermissionPlayer = new HashMap<>();
     private static final Map<UUID, PaginatedMenu> tempFrom = new HashMap<>();
 
     public static void openAnvil(Player player, String name, PaginatedMenu from) {
@@ -52,11 +71,11 @@ public class GroupCreateAnvil implements Listener {
 
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta meta = paper.getItemMeta();
-        meta.displayName(Component.text("Name"));
+        meta.displayName(Component.text("Permission"));
         paper.setItemMeta(meta);
         anvil.setItem(0, paper);
 
-        inputNamePlayer.put(player.getUniqueId(), true);
+        inputPermissionPlayer.put(player.getUniqueId(), true);
         tempFrom.put(player.getUniqueId(), from);
 
         player.openInventory(anvil);

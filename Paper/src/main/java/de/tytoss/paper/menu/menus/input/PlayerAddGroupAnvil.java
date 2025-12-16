@@ -7,6 +7,7 @@ import de.tytoss.core.utils.DurationParser;
 import de.tytoss.paper.LegendGroups;
 import de.tytoss.paper.menu.PaginatedMenu;
 import de.tytoss.paper.messenger.PaperSync;
+import de.tytoss.paper.prefix.PrefixManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -44,7 +45,7 @@ public class PlayerAddGroupAnvil implements Listener {
 
         PermissionPlayer owner = (PermissionPlayer) Core.getInstance().getPlayerManager().get(target.getUniqueId());
 
-        if (inputNamePlayer.remove(player.getUniqueId()) != null) {
+        if (inputNamePlayer.remove(player.getUniqueId()) != null && event.getRawSlot() == 2) {
             event.setCancelled(true);
 
             String groupName = inv.getRenameText();
@@ -54,16 +55,18 @@ public class PlayerAddGroupAnvil implements Listener {
             tempName.put(player.getUniqueId(), groupName);
             openDurationAnvil(player, name);
             return;
+        } else {
+            event.setCancelled(true);
         }
 
-        if (inputDurationPlayer.remove(player.getUniqueId()) != null) {
+        if (inputDurationPlayer.remove(player.getUniqueId()) != null && event.getRawSlot() == 2) {
             event.setCancelled(true);
 
             String duration = inv.getRenameText();
 
             if (duration == null) return;
 
-            if (duration.equalsIgnoreCase("p") || duration.isEmpty()) {
+            if (duration.equalsIgnoreCase("p")) {
                 String groupName = tempName.remove(player.getUniqueId());
 
                 if (groupName == null) return;
@@ -81,6 +84,7 @@ public class PlayerAddGroupAnvil implements Listener {
                 owner.addGroup(addedGroup);
 
                 PaperSync.sendSync(player, owner);
+                PrefixManager.update(owner);
                 tempFrom.get(player.getUniqueId()).open();
                 tempFrom.remove(player.getUniqueId());
                 return;
@@ -106,8 +110,11 @@ public class PlayerAddGroupAnvil implements Listener {
 
             owner.addGroup(addedGroup, duration);
             PaperSync.sendSync(player, owner);
+            PrefixManager.update(owner);
             tempFrom.get(player.getUniqueId()).open();
             tempFrom.remove(player.getUniqueId());
+        } else {
+            event.setCancelled(true);
         }
     }
 

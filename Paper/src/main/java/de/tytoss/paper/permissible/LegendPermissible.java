@@ -20,6 +20,7 @@ public class LegendPermissible extends PermissibleBase {
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
+        if (player.isOp()) return true;
         return permissionOwner.hasPermission(permission);
     }
 }

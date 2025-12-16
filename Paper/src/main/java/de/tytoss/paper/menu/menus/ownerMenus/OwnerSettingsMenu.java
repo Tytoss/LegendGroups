@@ -1,13 +1,16 @@
 package de.tytoss.paper.menu.menus.ownerMenus;
 
 import de.tytoss.core.Core;
+import de.tytoss.core.entity.PermissionGroup;
 import de.tytoss.core.entity.base.PermissionOwner;
+import de.tytoss.core.manager.base.OwnerManager;
 import de.tytoss.core.metadata.keys.MetaKeys;
 import de.tytoss.paper.LegendGroups;
 import de.tytoss.paper.menu.PaginatedMenu;
 import de.tytoss.paper.menu.PlayerMenuUtility;
 import de.tytoss.paper.menu.menus.input.PermissionAddAnvil;
-import de.tytoss.paper.messenger.PaperSync;
+import de.tytoss.paper.menu.menus.input.PrefixAnvil;
+import de.tytoss.paper.menu.menus.input.WeightAnvil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -17,37 +20,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
-public class OwnerPermissionsMenu extends PaginatedMenu {
-    public OwnerPermissionsMenu(PlayerMenuUtility playerMenuUtility, PaginatedMenu from) {
+public class OwnerSettingsMenu extends PaginatedMenu {
+    public OwnerSettingsMenu(PlayerMenuUtility playerMenuUtility, PaginatedMenu from) {
         super(playerMenuUtility, from);
     }
 
-    private final String permissionsAddItemName = LegendGroups.configManager.get().node("message", "gui", "permissionsAddItemName").getString();
-    private final String removeLore = LegendGroups.configManager.get().node("message", "lore", "removeLore").getString();
-
     @Override
     public List<ItemStack> dataToItems() {
-        PermissionOwner owner = Core.getInstance().getPlayerManager().get(player.getUniqueId());
-        Set<String> permissions = owner.getMetaData().getAll().stream()
-                .filter(meta -> meta.getKey().startsWith(MetaKeys.PERMISSIONS))
-                .filter(meta -> !meta.isExpired())
-                .map(meta -> meta.getKey().replace(MetaKeys.PERMISSIONS, ""))
-                .collect(Collectors.toSet());
+        Player p = Bukkit.getPlayer(from.getMenuName());
 
-        List<ItemStack> items = new ArrayList<>();
+        PermissionOwner owner;
 
-        ItemStack addItem = makeItem(Material.HOPPER, permissionsAddItemName, 0, "");
-        items.add(addItem);
-
-        for (String permission : permissions) {
-            ItemStack item = makeItem(Material.NAME_TAG, permission, 0, removeLore);
-            items.add(item);
+        if (p == null) {
+            owner = Core.getInstance().getGroupManager().getAll().stream().filter( group -> Objects.equals(group.getName(), from.getMenuName())).findFirst().orElse(null);
+        } else {
+            owner = Core.getInstance().getPlayerManager().get(p.getUniqueId());
         }
 
-        return items;
+        if (owner == null) return List.of();
+
+        ItemStack prefixItem = makeItem(Material.NAME_TAG, "§cPrefix", 0, owner.getPrefix());
+        ItemStack weightItem = makeItem(Material.ANVIL, "§cWeight", 0, owner.getMetaData().getMeta(MetaKeys.WEIGHT).getFirst().getValue().toString());
+        return List.of(prefixItem, weightItem);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class OwnerPermissionsMenu extends PaginatedMenu {
 
     @Override
     public int getSlots() {
-        return 54;
+        return 27;
     }
 
     @Override
@@ -106,19 +105,12 @@ public class OwnerPermissionsMenu extends PaginatedMenu {
             return;
         }
 
-        if (item.getType() == Material.HOPPER) {
-            PermissionAddAnvil.openAnvil(player, getMenuName(), this);
+        if (item.getType() == Material.NAME_TAG) {
+            PrefixAnvil.openAnvil(player, getMenuName(), this);
         }
 
-        if (item.getType() == Material.NAME_TAG && event.isRightClick()) {
-            PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
-            String permission = serializer.serialize(item.displayName()).replace("[", "").replace("]", "");
-
-            owner.removePermission(permission);
-
-            PaperSync.sendSync(player, owner);
-            refreshData();
+        if (item.getType() == Material.ANVIL) {
+            WeightAnvil.openAnvil(player, getMenuName(), this);
         }
     }
 }
-

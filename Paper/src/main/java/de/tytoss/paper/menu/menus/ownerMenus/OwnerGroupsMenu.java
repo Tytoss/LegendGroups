@@ -3,10 +3,12 @@ package de.tytoss.paper.menu.menus.ownerMenus;
 import de.tytoss.core.Core;
 import de.tytoss.core.entity.PermissionGroup;
 import de.tytoss.core.entity.PermissionPlayer;
+import de.tytoss.core.entity.base.PermissionOwner;
 import de.tytoss.paper.LegendGroups;
 import de.tytoss.paper.menu.PaginatedMenu;
 import de.tytoss.paper.menu.PlayerMenuUtility;
 import de.tytoss.paper.menu.menus.input.PlayerAddGroupAnvil;
+import de.tytoss.paper.prefix.PrefixManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -103,9 +105,21 @@ public class OwnerGroupsMenu extends PaginatedMenu {
 
         Player target = Bukkit.getPlayer(from.getMenuName());
 
-        if (target == null) return;
+        PermissionOwner owner;
 
-        PermissionPlayer owner = (PermissionPlayer) Core.getInstance().getPlayerManager().get(target.getUniqueId());
+        if (target != null) {
+            owner = Core.getInstance().getPlayerManager().get(target.getUniqueId());
+        } else {
+            owner = Core.getInstance().getGroupManager().getAll().stream().filter( group -> group.getName().equals(from.getMenuName())).findFirst().orElse(null);
+        }
+
+        if (owner == null) {
+            TextComponent prefix = Component.text(Objects.requireNonNull(LegendGroups.configManager.get().node("message", "prefix").getString()));
+            TextComponent message = Component.text(Objects.requireNonNull(LegendGroups.configManager.get().node("message", "error", "ownerNotFound").getString()));
+
+            this.player.sendMessage(prefix.append(message));
+            return;
+        }
 
         ItemStack item = event.getCurrentItem();
 
@@ -122,7 +136,12 @@ public class OwnerGroupsMenu extends PaginatedMenu {
             UUID groupUUID = UUID.fromString(item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING));
             PermissionGroup group = (PermissionGroup) Core.getInstance().getGroupManager().get(groupUUID);
 
-            owner.removeGroup(group);
+            if (owner instanceof PermissionPlayer) {
+                ((PermissionPlayer) owner).removeGroup(group);
+                PrefixManager.update((PermissionPlayer) owner);
+            } else if (owner instanceof PermissionGroup) {
+                ((PermissionGroup) owner).removeInheritedGroup(group);
+            }
 
             refreshData();
         }

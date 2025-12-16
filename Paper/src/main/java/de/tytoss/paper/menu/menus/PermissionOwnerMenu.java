@@ -1,12 +1,16 @@
 package de.tytoss.paper.menu.menus;
 
+import de.tytoss.core.entity.base.PermissionOwner;
 import de.tytoss.paper.LegendGroups;
 import de.tytoss.paper.menu.PaginatedMenu;
 import de.tytoss.paper.menu.PlayerMenuUtility;
 import de.tytoss.paper.menu.menus.ownerMenus.OwnerGroupsMenu;
 import de.tytoss.paper.menu.menus.ownerMenus.OwnerPermissionsMenu;
+import de.tytoss.paper.menu.menus.ownerMenus.OwnerSettingsMenu;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,6 +23,7 @@ public class PermissionOwnerMenu extends PaginatedMenu {
 
     private final String ownerGroupsItemName = LegendGroups.configManager.get().node("message", "gui", "ownerGroupsItemName").getString();
     private final String ownerPermissionsItemName = LegendGroups.configManager.get().node("message", "gui", "ownerPermissionsItemName").getString();
+    private final String ownerSettingsItemName = LegendGroups.configManager.get().node("message", "gui", "ownerSettingsItemName").getString();
 
     public PermissionOwnerMenu(PlayerMenuUtility playerMenuUtility, PaginatedMenu from, String ownerName) {
         super(playerMenuUtility, from);
@@ -27,8 +32,14 @@ public class PermissionOwnerMenu extends PaginatedMenu {
 
     @Override
     public List<ItemStack> dataToItems() {
+        Player p = Bukkit.getPlayer(OWNER_NAME);
+
         ItemStack groupItem = makeItem(Material.CHEST, ownerGroupsItemName, 0, "");
         ItemStack permissionItem = makeItem(Material.CHEST, ownerPermissionsItemName, 0, "");
+        if (p == null) {
+            ItemStack settingsItem = makeItem(Material.CHEST, ownerSettingsItemName, 0, "");
+            return List.of(groupItem, permissionItem, settingsItem);
+        }
         return List.of(groupItem, permissionItem);
     }
 
@@ -75,6 +86,10 @@ public class PermissionOwnerMenu extends PaginatedMenu {
                 PlayerMenuUtility playerMenuUtility = new PlayerMenuUtility(player);
                 OwnerPermissionsMenu permissionsMenu = new OwnerPermissionsMenu(playerMenuUtility, this);
                 permissionsMenu.open();
+            } else if (displayName.equals(ownerSettingsItemName)) {
+                PlayerMenuUtility playerMenuUtility = new PlayerMenuUtility(player);
+                OwnerSettingsMenu settingsMenu = new OwnerSettingsMenu(playerMenuUtility, this);
+                settingsMenu.open();
             }
         }
     }

@@ -1,14 +1,18 @@
 package de.tytoss.paper;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import de.tytoss.core.Core;
 import de.tytoss.core.database.DatabaseManager;
 import de.tytoss.core.database.PermissionOwnerRepository;
-import de.tytoss.paper.commands.TestCommand;
+import de.tytoss.paper.commands.LegendGroupCommand;
 import de.tytoss.paper.configuration.ConfigurationManager;
 import de.tytoss.paper.listener.ConnectionListener;
+import de.tytoss.paper.listener.PacketListener;
 import de.tytoss.paper.menu.MenuManager;
-import de.tytoss.paper.menu.menus.input.GroupCreateAnvil;
-import de.tytoss.paper.menu.menus.input.PlayerAddGroupAnvil;
+import de.tytoss.paper.menu.menus.input.*;
+import de.tytoss.paper.messenger.PaperSync;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,11 +29,17 @@ public final class LegendGroups extends JavaPlugin {
 
     public static ConfigurationManager configManager;
 
+
     @Override
     public void onLoad() {
         instance = this;
 
         configManager = new ConfigurationManager(this);
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+
+        PacketEvents.getAPI().getEventManager().registerListener(
+                new PacketListener(), PacketListenerPriority.NORMAL);
 
         try {
             configManager.load();
@@ -56,13 +66,19 @@ public final class LegendGroups extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        PacketEvents.getAPI().init();
         getServer().getMessenger().registerOutgoingPluginChannel(this, "legendgroups:sync");
+
+        PaperSync.syncScheduler();
 
         Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerAddGroupAnvil(), this);
         Bukkit.getPluginManager().registerEvents(new GroupCreateAnvil(), this);
+        Bukkit.getPluginManager().registerEvents(new PermissionAddAnvil(), this);
+        Bukkit.getPluginManager().registerEvents(new PrefixAnvil(), this);
+        Bukkit.getPluginManager().registerEvents(new WeightAnvil(), this);
 
-        getCommand("abc").setExecutor(new TestCommand());
+        getCommand("legendgroups").setExecutor(new LegendGroupCommand());
 
         MenuManager.setup(this.getServer());
     }

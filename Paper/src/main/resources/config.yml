@@ -7,6 +7,9 @@ database:
 
 message:
   prefix: "§e§lLegendGroups §7| "
+  rankCommand:
+    line_1: "Du hast folgende Ränge:"
+    line_2: "%rank% -> %duration%"
   gui:
     firstPage: "Erste Seite"
     previousPage: "Vorherige Seite"
@@ -20,7 +23,9 @@ message:
     ownerPermissionsItemName: "Permissions"
     groupsAddItemName: "§aGruppe Hinzufügen"
     permissionsAddItemName: "§aPermission Hinzufügen"
+    ownerSettingsItemName: "§eEinstellungen"
   lore:
     removeLore: "Rechtsclick zum Entfernen"
   error:
     ownerNotFound: "Could not Load Permission Owner"
+    commandUsage: "Benutze /legendgroups editor für den Editor"

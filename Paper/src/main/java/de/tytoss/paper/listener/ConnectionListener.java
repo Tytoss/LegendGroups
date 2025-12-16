@@ -2,7 +2,12 @@ package de.tytoss.paper.listener;
 
 import de.tytoss.core.Core;
 import de.tytoss.core.entity.PermissionPlayer;
+import de.tytoss.core.entity.base.PermissionOwner;
+import de.tytoss.paper.LegendGroups;
 import de.tytoss.paper.permissible.PermissionInjection;
+import de.tytoss.paper.prefix.PrefixManager;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,7 +26,25 @@ public class ConnectionListener implements Listener {
 
         Core.getInstance().getPlayerManager().load(player.getUniqueId()).subscribe(permissionOwner -> {
             PermissionInjection.inject(player, permissionOwner);
+
+            PermissionPlayer permissionPlayer = (PermissionPlayer) permissionOwner;
+
+            Component joinMessage = Component.text("§8[§a+§8]§r " + PrefixManager.resolvePrefix(permissionPlayer).replace("&", "§") + "§r" + permissionPlayer.getName());
+
+            event.joinMessage(joinMessage);
+
+            PrefixManager.update((PermissionPlayer) permissionOwner);
+
+            Bukkit.getScheduler().runTask(LegendGroups.getInstance(), () -> {
+                for (PermissionOwner other : Core.getInstance().getPlayerManager().getAll()) {
+                    if (!other.getId().equals(permissionOwner.getId())) {
+                        PrefixManager.update((PermissionPlayer) other);
+                    }
+                }
+            });
         });
+
+        PrefixManager.initializeNames(player);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -39,5 +62,7 @@ public class ConnectionListener implements Listener {
         permissionPlayer.save();
 
         PermissionInjection.uninject(player);
+
+        PrefixManager.removeCache(player);
     }
 }
