@@ -111,7 +111,7 @@ public abstract class PermissionOwner {
 
     public @Nullable String getPrefix() {
         MetaData<?> meta = metaData.getFirstMeta(MetaKeys.PREFIX);
-        return meta != null ? meta.getValue().toString() : null;
+        return meta != null ? meta.getValue().toString() : "";
     }
 
     public void setPrefix(String prefix) {
